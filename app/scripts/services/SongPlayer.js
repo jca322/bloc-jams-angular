@@ -25,8 +25,7 @@
         */        
         var setSong = function(song) {
             if(currentBuzzObject) {
-                currentBuzzObject.stop();
-                SongPlayer.currentSong.playing = null;
+                stopSong(song);
             }
             
             currentBuzzObject = new buzz.sound(song.audioUrl, {
@@ -48,6 +47,16 @@
         };
         
         /**
+        *@function stopSong
+        *@desc Stops current audio file and sets song.playing to null
+        *@param {Object} song
+        */
+        var stopSong = function(song) {
+            currentBuzzObject.stop();
+            SongPlayer.currentSong.playing = null;
+        };
+        
+        /**
         *@function getSongIndex
         *@desc Returns index of current song
         *@param {Object} song
@@ -63,7 +72,7 @@
         SongPlayer.currentSong = null;
         
         /**
-        *@function SongPlayer.play method
+        *@function SongPlayer.play 
         *@desc Checks if current song playing equals the selected song, if not then it sets the current song to the selected song and plays this song.  If current song is the same as the selected song, checks to see if audo file is paused.  If so, it plays selected song.
         *@param {Object} song
         */
@@ -80,7 +89,7 @@
         };
         
         /**
-        *@function SongPlayer.pause method
+        *@function SongPlayer.pause 
         *@desc Pauses current audio file and sets song.playing to false
         *@param {Object} song
         */
@@ -91,7 +100,7 @@
         };
         
         /**
-        *@function SongPlayer.previous method
+        *@function SongPlayer.previous 
         *@desc Finds the index of the current song and decreases it by 1.  If current index is less than 0, stop current song and set value of current song to first song.  Otherwise, move to previous song and automatically play it.
         */
         SongPlayer.previous = function() {
@@ -99,8 +108,26 @@
             currentSongIndex--;
             
             if(currentSongIndex < 0) {
-                currentBuzzObject.stop();
-                SongPlayer.currentSong.playing = null;
+                stopSong(song);
+            } else {
+                var song = currentAlbum.songs[currentSongIndex];
+                setSong(song);
+                playSong(song);
+            }
+        };
+        
+        /**
+        *@function SongPlayer.next 
+        *@desc Finds the index of the current song and increases it by 1.  If current index is equal to album length, set value of current song to 0.  Otherwise, move to next song and automatically play it.
+        */
+        SongPlayer.next = function() {
+            var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+            currentSongIndex++;
+            
+            if(currentSongIndex === currentAlbum.songs.length) {
+                var song = currentAlbum.songs[0];
+                setSong(song);
+                playSong(song);
             } else {
                 var song = currentAlbum.songs[currentSongIndex];
                 setSong(song);
