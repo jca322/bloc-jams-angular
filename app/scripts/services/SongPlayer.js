@@ -1,5 +1,5 @@
 (function() {
-    function SongPlayer() {
+    function SongPlayer(Fixtures) {
         /**
         *@desc empty SongPlayer object
         *@type {Object}
@@ -7,10 +7,10 @@
         var SongPlayer = {};
         
         /**
-        *@desc current song
+        *@desc stores Fixtures.getAlbum method (albumPicasso) in currentAlbum variable
         *@type {Object}
         */
-        var currentSong = null;
+        var currentAlbum = Fixtures.getAlbum();
         
         /**
         *@desc Buzz object audio file
@@ -26,7 +26,7 @@
         var setSong = function(song) {
             if(currentBuzzObject) {
                 currentBuzzObject.stop();
-                currentSong.playing = null;
+                SongPlayer.currentSong.playing = null;
             }
             
             currentBuzzObject = new buzz.sound(song.audioUrl, {
@@ -34,7 +34,7 @@
                 preload: true
             });
             
-            currentSong = song;
+            SongPlayer.currentSong = song;
         };
         
         /**
@@ -48,15 +48,31 @@
         };
         
         /**
+        *@function getSongIndex
+        *@desc Returns index of current song
+        *@param {Object} song
+        */
+        var getSongIndex = function(song) {
+            return currentAlbum.songs.indexOf(song);
+        };
+        
+        /**
+        *@desc current song
+        *@type {Object}
+        */
+        SongPlayer.currentSong = null;
+        
+        /**
         *@function SongPlayer.play method
         *@desc Checks if current song playing equals the selected song, if not then it sets the current song to the selected song and plays this song.  If current song is the same as the selected song, checks to see if audo file is paused.  If so, it plays selected song.
         *@param {Object} song
         */
         SongPlayer.play = function(song) {
-            if(currentSong !== song) {
+            song = song || SongPlayer.currentSong;
+            if(SongPlayer.currentSong !== song) {
                 setSong(song);
                 playSong(song);    
-            } else if(currentSong === song) {
+            } else if(SongPlayer.currentSong === song) {
                 if(currentBuzzObject.isPaused()) {
                     playSong(song);
                 }
@@ -69,8 +85,27 @@
         *@param {Object} song
         */
         SongPlayer.pause = function(song) {
+            song = song || SongPlayer.currentSong;
             currentBuzzObject.pause();
             song.playing = false;
+        };
+        
+        /**
+        *@function SongPlayer.previous method
+        *@desc Finds the index of the current song and decreases it by 1.  If current index is less than 0, stop current song and set value of current song to first song.  Otherwise, move to previous song and automatically play it.
+        */
+        SongPlayer.previous = function() {
+            var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+            currentSongIndex--;
+            
+            if(currentSongIndex < 0) {
+                currentBuzzObject.stop();
+                SongPlayer.currentSong.playing = null;
+            } else {
+                var song = currentAlbum.songs[currentSongIndex];
+                setSong(song);
+                playSong(song);
+            }
         };
         
         return SongPlayer;
