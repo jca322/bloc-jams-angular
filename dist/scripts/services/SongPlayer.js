@@ -84,6 +84,12 @@
         SongPlayer.currentTime = null;
         
         /**
+        *@desc Sets default volume level
+        *@type {Number}
+        */
+        SongPlayer.volume = 80;
+        
+        /**
         *@function SongPlayer.play 
         *@desc Checks if current song playing equals the selected song, if not then it sets the current song to the selected song and plays this song.  If current song is the same as the selected song, checks to see if audo file is paused.  If so, it plays selected song.
         *@param {Object} song
@@ -155,6 +161,12 @@
         SongPlayer.setCurrentTime = function(time) {
             if(currentBuzzObject) {
                 currentBuzzObject.setTime(time);
+            }
+        };
+        
+        SongPlayer.setVolume = function(volume) {
+            if(currentBuzzObject) {
+                currentBuzzObject.setVolume(volume);
             }
         };
         
