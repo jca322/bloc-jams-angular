@@ -1,6 +1,6 @@
 (function() {
-    function timecode() {
-        return function(seconds) {
+    function timecode(SongPlayer, Fixtures) {
+        /*return function(seconds) {
             var seconds = Number.parseFloat(seconds);
             
             if(Number.isNaN(seconds)) {
@@ -20,10 +20,22 @@
             output += remainingSeconds;
             
             return output;
+        };*/
+        var currentBuzzObject = null;
+        
+        return function(song) {
+            currentBuzzObject = new buzz.sound(song.audioUrl, {
+                formats: ['mp3'],
+                preload: true
+            });
+            
+            timer = buzz.toTimer(currentBuzzObject.getDuration());
+            return timer;
         };
+        
     }
     
     angular
         .module('blocJams')
-        .filter('timecode', timecode);
+        .filter('timecode', ['SongPlayer', 'Fixtures', timecode]);
 })();
