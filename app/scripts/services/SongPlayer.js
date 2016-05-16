@@ -27,7 +27,7 @@
             if(currentBuzzObject) {
                 stopSong(song);
             }
-            
+                     
             currentBuzzObject = new buzz.sound(song.audioUrl, {
                 formats: ['mp3'],
                 preload: true
@@ -36,10 +36,15 @@
             currentBuzzObject.bind('timeupdate', function() {
                 $rootScope.$apply(function() {
                     SongPlayer.currentTime = currentBuzzObject.getTime();
+                    if(currentBuzzObject.isEnded()) {
+                        SongPlayer.next();
+                    }
                 });
             });
             
             SongPlayer.currentSong = song;
+            
+            
         };
         
         /**
@@ -95,6 +100,11 @@
         *@param {Object} song
         */
         SongPlayer.play = function(song) {
+            //plays first song when first click on play button in player bar
+            if(!currentBuzzObject && song === undefined) {
+                song = currentAlbum.songs[0];
+            }
+            
             song = song || SongPlayer.currentSong;
             if(SongPlayer.currentSong !== song) {
                 setSong(song);
@@ -150,6 +160,12 @@
                 var song = currentAlbum.songs[currentSongIndex];
                 setSong(song);
                 playSong(song);
+            }
+        };
+        
+        SongPlayer.mute = function() {
+            if(currentBuzzObject) {
+                currentBuzzObject.toggleMute();
             }
         };
         
